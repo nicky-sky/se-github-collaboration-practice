@@ -20,7 +20,7 @@ def show_tasks():
     for task in tasks:
         # Menampilkan ID, Judul, Status, dan PIC sesuai modul
         print(f"{task['id']}. {task['title']} | Status: {task['status']} | PIC: {task['assignee']}")
-# Pastikan def add_task sejajar dengan def lainnya (paling kiri)
+
 def add_task():
     tasks = load_tasks()
     
