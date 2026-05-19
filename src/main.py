@@ -1,4 +1,5 @@
-from task_manager import show_tasks, add_task, update_status, delete_task, search_by_assignee
+from task_manager import show_tasks, add_task, update_status, search_by_assignee
+from delete import delete_task
 
 def main():
     while True:
