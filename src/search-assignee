@@ -1,0 +1,117 @@
+import json
+
+DATA_FILE = "data/tasks.json"
+
+def load_tasks():
+    """Load tasks dari file JSON"""
+    with open(DATA_FILE, "r") as file:
+        return json.load(file)
+
+def search_by_assignee_name(assignee_name):
+    """
+    Cari task berdasarkan nama assignee
+    
+    Args:
+        assignee_name (str): Nama assignee yang ingin dicari
+    
+    Returns:
+        list: List task yang ditugaskan ke assignee tersebut
+    """
+    tasks = load_tasks()
+    found_tasks = [task for task in tasks if task["assignee"].lower() == assignee_name.lower()]
+    return found_tasks
+
+def search_by_assignee_with_status(assignee_name, status=None):
+    """
+    Cari task berdasarkan nama assignee dan status (opsional)
+    
+    Args:
+        assignee_name (str): Nama assignee yang ingin dicari
+        status (str, optional): Status task (todo, in_progress, done)
+    
+    Returns:
+        list: List task yang sesuai dengan kriteria
+    """
+    tasks = load_tasks()
+    found_tasks = [task for task in tasks if task["assignee"].lower() == assignee_name.lower()]
+    
+    if status:
+        found_tasks = [task for task in found_tasks if task["status"].lower() == status.lower()]
+    
+    return found_tasks
+
+def search_by_assignee_priority(assignee_name, priority=None):
+    """
+    Cari task berdasarkan nama assignee dan priority (opsional)
+    
+    Args:
+        assignee_name (str): Nama assignee yang ingin dicari
+        priority (str, optional): Priority task (low, medium, high)
+    
+    Returns:
+        list: List task yang sesuai dengan kriteria
+    """
+    tasks = load_tasks()
+    found_tasks = [task for task in tasks if task["assignee"].lower() == assignee_name.lower()]
+    
+    if priority:
+        found_tasks = [task for task in found_tasks if task["priority"].lower() == priority.lower()]
+    
+    return found_tasks
+
+def display_search_results(found_tasks, assignee_name):
+    """
+    Tampilkan hasil pencarian dengan format yang rapi
+    
+    Args:
+        found_tasks (list): List task hasil pencarian
+        assignee_name (str): Nama assignee yang dicari
+    """
+    if not found_tasks:
+        print(f"✗ Tidak ada task yang ditugaskan kepada '{assignee_name}'.")
+        return
+    
+    print(f"\n=== Task untuk {assignee_name} ===")
+    print(f"Total: {len(found_tasks)} task(s)\n")
+    
+    for task in found_tasks:
+        status_symbol = {
+            "todo": "☐",
+            "in_progress": "◐",
+            "done": "✓"
+        }.get(task["status"], "?")
+        
+        print(f"{status_symbol} {task['id']}. {task['title']}")
+        print(f"   Status: {task['status']} | Priority: {task['priority']}")
+        if task.get('description'):
+            print(f"   Deskripsi: {task['description']}")
+        print()
+
+def search_assignee_interactive():
+    """Fungsi interaktif untuk mencari task berdasarkan assignee"""
+    tasks = load_tasks()
+    
+    if not tasks:
+        print("Belum ada task yang terdaftar.")
+        return
+    
+    print("\n=== PENCARIAN TASK BERDASARKAN ASSIGNEE ===")
+    
+    # Tampilkan daftar assignee yang tersedia
+    assignees = sorted(set(task["assignee"] for task in tasks))
+    print("\nDaftar Assignee yang tersedia:")
+    for i, assignee in enumerate(assignees, 1):
+        task_count = len([t for t in tasks if t["assignee"].lower() == assignee.lower()])
+        print(f"{i}. {assignee} ({task_count} task)")
+    
+    assignee_name = input("\nMasukkan nama assignee yang ingin dicari: ").strip()
+    
+    if not assignee_name:
+        print("✗ Nama assignee tidak boleh kosong.")
+        return
+    
+    found_tasks = search_by_assignee_name(assignee_name)
+    display_search_results(found_tasks, assignee_name)
+
+if __name__ == "__main__":
+    search_assignee_interactive()
